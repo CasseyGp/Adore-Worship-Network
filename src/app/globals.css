@@ -1,26 +1,334 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ------------------------------------------------------------------
+   Adore design tokens
+   Colour, type, spacing, radius, shadow and motion live here so every
+   component draws from one vocabulary (Tailwind utilities are generated
+   from the @theme block).
+------------------------------------------------------------------- */
+@theme {
+  /* Colour — night */
+  --color-midnight: #070e24;
+  --color-navy: #0b1a3f;
+  --color-navy-raised: #0e1a3d;
+  --color-ocean: #12307a;
+  --color-ocean-bright: #2f56b8;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Colour — water & light */
+  --color-teal-deep: #0f6a63;
+  --color-teal: #2ec4b6;
+  --color-cyan: #5fe0d3;
+  --color-cyan-soft: #bfede7;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Colour — warmth */
+  --color-ivory: #f7f2e8;
+  --color-ivory-bright: #fbf8f1;
+  --color-sand: #ede4d2;
+  --color-sand-line: #d6ccb6;
+  --color-amber: #f0b85c;
+  --color-amber-soft: #f3d9a8;
+  --color-amber-deep: #8a5a12;
+
+  /* Colour — text */
+  --color-ink: #0e1530;
+  --color-slate: #3d4566;
+  --color-muted: #555b74;
+  --color-mist: #c4cbde;
+  --color-mist-dim: #a9b2cb;
+
+  /* Status */
+  --color-error: #b3261e;
+  --color-error-soft: #ffb4a9;
+
+  /* Type */
+  --font-display: var(--font-instrument-serif), "Times New Roman", serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--letter-spacing: 0.2em;
+  --text-eyebrow--line-height: 1.4;
+
+  /* Radius */
+  --radius-card: 1.5rem;
+  --radius-field: 0.875rem;
+  --radius-pill: 999px;
+
+  /* Shadow — elevation */
+  --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 30px 60px -30px rgb(3 8 24 / 0.65);
+  --shadow-soft: 0 24px 48px -32px rgb(11 26 63 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(95 224 211 / 0.25), 0 18px 40px -18px rgb(46 196 182 / 0.55);
+
+  /* Motion — resonance, flow, breath, elevation */
+  --ease-flow: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-breathe: cubic-bezier(0.45, 0, 0.55, 1);
+  --duration-quick: 180ms;
+  --duration-settle: 420ms;
+  --duration-reveal: 900ms;
+
+  --animate-turn: turn 60s linear infinite;
+  --animate-turn-reverse: turn 90s linear infinite reverse;
+  --animate-breathe: breathe 9s var(--ease-breathe) infinite;
+  --animate-flow: flow 18s linear infinite;
+  --animate-flow-slow: flow 32s linear infinite;
+  --animate-rise: rise var(--duration-reveal) var(--ease-flow) both;
+
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+      transform: scale(0.96);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+  }
+  @keyframes flow {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Layout spacing tokens */
+:root {
+  --gutter: max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right));
+  --section-y: clamp(4.5rem, 12vw, 9rem);
+  --header-h: 4.5rem;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-midnight);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-cyan);
+    color: var(--color-navy);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section {
+    padding-block: var(--section-y);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  .eyebrow {
+    font-size: var(--text-eyebrow);
+    line-height: 1.4;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* Quiet scroll reveal: CSS-only, enhancement where scroll-driven
+     animations are supported. Elsewhere content is simply visible. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 55%;
+      }
+    }
+  }
+
+  /* Hero entrance — staggered on first paint */
+  @media (prefers-reduced-motion: no-preference) {
+    .enter {
+      animation: var(--animate-rise);
+      animation-delay: calc(var(--i, 0) * 110ms + 80ms);
+    }
+  }
+
+  /* ---------------- Photography motion ----------------
+     All transform/clip-path only (compositor-friendly). Nothing loops;
+     every effect is skipped under prefers-reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Hero photo settles once on load — light exhale, not a zoom loop. */
+    .hero-settle {
+      animation: settle 2.4s var(--ease-flow) both;
+    }
+
+    /* Mask reveal as a photo enters the viewport. */
+    @supports (animation-timeline: view()) {
+      .photo-reveal {
+        animation: unveil linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 35%;
+      }
+    }
+  }
+
+  /* Low-amplitude parallax — desktop pointers only, never on phones. */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) and (min-width: 64rem) and (hover: hover) {
+      .hero-parallax {
+        animation: drift linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100vh;
+      }
+      .photo-drift {
+        animation: drift-soft linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+}
+
+@keyframes settle {
+  from {
+    transform: scale(1.06);
+    opacity: 0.6;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes unveil {
+  from {
+    clip-path: inset(14% 6% 14% 6% round var(--radius-card));
+    transform: scale(1.04);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0);
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: translateY(8%);
+  }
+}
+
+@keyframes drift-soft {
+  from {
+    transform: translateY(-3%);
+  }
+  to {
+    transform: translateY(3%);
+  }
+}
+
+/* Reduced motion: stop all ambient movement, keep a static composition */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---------------- Countdown & giving dialog ---------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .countdown-tick {
+    animation: tick 420ms var(--ease-flow) both;
+  }
+  .give-dialog[open] {
+    animation: sheet-in var(--duration-settle) var(--ease-flow) both;
+  }
+  .give-dialog[open]::backdrop {
+    animation: fade-in var(--duration-settle) ease-out both;
+  }
+}
+
+/* Lock page scroll behind the modal sheet. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+@keyframes tick {
+  from {
+    transform: translateY(45%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
 }
